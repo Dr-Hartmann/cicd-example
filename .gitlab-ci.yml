@@ -1,0 +1,7 @@
+trigger-cicd:
+  trigger:
+    include: cicd/.gitlab-ci.yml
+    strategy: depend
+  rules:
+    - changes:
+        - cicd/**/*

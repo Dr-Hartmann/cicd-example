@@ -1,0 +1,125 @@
+name: Развертывание в производственной среде (тестовый режим)
+
+on:
+  push:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+  APP_NAME: app
+
+jobs:
+  # Проверка стилей кода, запуск тестов
+  check:
+    runs-on: ubuntu-latest
+    # defaults:
+    #   run:
+    #     working-directory: ./app
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - name: Run Fmt
+        run: cargo fmt --all -- --check
+      - name: Run Clippy
+        run: cargo clippy -- -D warnings
+      - name: Run Tests
+        run: cargo test
+
+  # Непосредственно деплой
+  deploy:
+    environment: Production
+    runs-on: ubuntu-latest
+    # defaults:
+    #   run:
+    #     working-directory: ./app
+    needs: check
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Установка Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      # - name: Cache dependencies
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: |
+      #       ~/.cargo/registry
+      #       ./app/target
+      #     key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Сборка релизной версии
+        run: cargo build --release --verbose
+
+      # ШАГ 1: Создаем временную папку на сервере через SSH
+      # - name: Prepare server folders
+      #   uses: appleboy/ssh-action@v1.0.0
+      #   with:
+      #     host: ${{ vars.SERVER_HOST }}
+      #     username: ${{ vars.SERVER_USER }}
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     script: mkdir -p ~/temp
+
+      # ШАГ 2: Пересылаем скомпилированный файл с GitHub на ваш сервер
+      # - name: Copy binary to server
+      #   uses: appleboy/scp-action@v0.1.7
+      #   with:
+      #     host: ${{ vars.SERVER_HOST }}
+      #     username: ${{ vars.SERVER_USER }}
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     source: "./app/target/release/${{ env.APP_NAME }}"
+      #     target: "~/temp"
+      #     strip_components: 3
+
+      # ШАГ 3: Установка и настройка секретов
+      # - name: Finalize deployment
+      #   uses: appleboy/ssh-action@v1.0.0
+      #   with:
+      #     host: ${{ vars.SERVER_HOST }}
+      #     username: ${{ vars.SERVER_USER }}
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     script_stop: true
+      #     script: |
+      #       # Перемещаем бинарник в рабочую папку
+      #       sudo mkdir -p /opt/app
+      #       sudo mv ~/temp/${{ env.APP_NAME }} /opt/app/${{ env.APP_NAME }}
+      #       sudo chmod +x /opt/app/${{ env.APP_NAME }}
+
+      #       # Настройка секретов для Systemd
+      #       sudo mkdir -p /etc/systemd/system/app.service.d
+
+      #       # Записываем секреты в конфиг (права 600 для безопасности)
+      #       printf "[Service]\nEnvironment=DB_PASSWORD=${{ secrets.DB_PASSWORD }}\nEnvironment=DB_HOST=${{ vars.DB_HOST }}\n" | sudo tee /etc/systemd/system/app.service.d/secrets.conf > /dev/null
+      #       sudo chmod 600 /etc/systemd/system/app.service.d/secrets.conf
+
+      #       # Перезапуск
+      #       sudo systemctl daemon-reload
+      #       sudo systemctl restart app.service || (sudo journalctl -u app.service -n 20 && exit 1)
+
+      - name: Имитация развертывания (Симуляция сервера)
+        run: |
+          echo "--- ПОДКЛЮЧЕНИЕ К СЕРВЕРУ СИМУЛИРОВАНО ---"
+          echo "Хост: ${{ vars.SERVER_HOST }}"
+          echo "Пользователь: ${{ vars.SERVER_USER }}"
+
+          # 1. Имитируем создание папок (внутри виртуальной машины GitHub)
+          sudo mkdir -p /opt/app
+
+          # 2. Имитируем копирование скомпилированного файла
+          sudo cp target/release/${{ env.APP_NAME }} /opt/app/${{ env.APP_NAME }}
+          sudo chmod +x /opt/app/${{ env.APP_NAME }}
+
+          # 3. Имитируем настройку секретов для systemd
+          # Мы берем секрет DB_PASSWORD и переменную DB_HOST из настроек GitHub
+          sudo mkdir -p /etc/systemd/system/app.service.d
+          printf "[Service]\nEnvironment=DB_PASSWORD=${{ secrets.DB_PASSWORD }}\nEnvironment=DB_HOST=${{ vars.DB_HOST }}\n" | sudo tee /etc/systemd/system/app.service.d/secrets.conf > /dev/null
+          sudo chmod 600 /etc/systemd/system/app.service.d/secrets.conf
+
+      - name: Проверка результата симуляции
+        run: |
+          echo "--- ИТОГИ ТЕСТОВОГО ДЕПЛОЯ ---"
+          echo "Бинарный файл найден в /opt/app: $(ls -l /opt/app/app)"
+          echo "Конфиг секретов создан успешно."
+          echo "Все тесты CI/CD пройдены."
