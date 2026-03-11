@@ -1,8 +1,36 @@
-job 1:
-  script: echo "Привет всем"
+image: ubuntu:latest
 
-job 2:
-  script: echo "И хорошего настроения"
+variables:
+  TEST_1_SUCCESS: "true"
+  TEST_2_SUCCESS: "true"
+
+before_script:
+  - echo "Скрипт до основных инструкций (в каждой задаче)"
+
+stages:
+  - test
+  - build
+  - deploy
+
+build:
+  stage: build
+  script:
+    - echo "Сборка проекта"
+    - echo "Собранный проект" > build.txt
+  artifacts:
+    paths: build.txt
+
+test1:
+  stage: test
+  script:
+    - echo "Первый набор тестов"
+    - echo $TEST_1_SUCCESS
+
+test2:
+  stage: test
+  script:
+    - echo "Второй набор тестов"
+    - echo $TEST_2_SUCCESS
 
 .default_template:
   script:
@@ -12,3 +40,16 @@ build_job:
   extends: .default_template
   script:
     - echo "Building the project"
+
+deploy:
+  stage: deploy
+  script:
+    - echo $(cat build.txt)
+    - echo "Развертывание проекта"
+  needs:
+    - build
+  rules:
+    - if: $TEST_1_SUCCESS == "true" && $TEST_2_SUCCESS == "true"
+
+after_script:
+  - echo "Скрипт после основных инструкций (в каждой задаче)"
