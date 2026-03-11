@@ -66,12 +66,10 @@ deploy-1:
   needs:
     - build-release
   rules:
-    # ручной запуск деплоя (последняя линия обороны, ответственность на человеке)
-    - if: $CI_COMMIT_BRANCH == "main"
-      when: manual
-    - if: $CI_COMMIT_BRANCH == "master"
-      when: manual
-  # - if: $CI_COMMIT_TAG # Запускать только при создании тега (версии)
+    - if: $CI_COMMIT_TAG # Запускать только при создании тега (версии)
+      when: on_success
+      # ручной запуск деплоя (последняя линия обороны, ответственность на человеке)
+      else: manual
   # when: on_success # или вообще убрать, он по умолчанию
   before_script:
     - echo "Переопределение before_script"
