@@ -51,7 +51,7 @@ build-release:
     - echo $PROJECT_DIR
   script:
     - echo "Билд"
-    - cargo build --release
+    # - cargo build --release
   artifacts:
     paths:
       - ./cicd-rust/src/target/release/cicd-rust
@@ -74,7 +74,7 @@ deploy-1:
     - if: $CI_COMMIT_TAG =~ /^v.*/ # Запускать только при создании тега (версии)
       when: on_success # по умолчанию
       # ручной запуск деплоя (последняя линия обороны, ответственность на человеке)
-    - if: $CI_COMMIT_BRANCH
+    - if: $CI_DEFAULT_BRANCH
       when: manual
   script:
     - echo "Выгрузка артефакта для версии $CI_COMMIT_TAG"
