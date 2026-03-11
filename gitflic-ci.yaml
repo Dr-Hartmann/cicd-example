@@ -1,4 +1,4 @@
-image: ubuntu:latest
+image: alpine:3.22
 
 variables:
   TEST_1_SUCCESS: "true"
@@ -43,6 +43,8 @@ build_job:
 
 deploy:
   stage: deploy
+  before_script:
+    - echo "Подготовка к деплою"
   script:
     - echo $(cat build.txt)
     - echo "Развертывание проекта"
@@ -50,6 +52,7 @@ deploy:
     - build
   rules:
     - if: $TEST_1_SUCCESS == "true" && $TEST_2_SUCCESS == "true"
+      when: manual
 
 after_script:
   - echo "Скрипт после основных инструкций (в каждой задаче)"
