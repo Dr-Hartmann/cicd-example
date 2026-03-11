@@ -10,7 +10,7 @@ variables:
 cache:
   paths:
     - .cargo/
-    - target/
+    - ./cicd-rust/src/target/
 
 # выполняется перед каждой задачей
 before_script:
