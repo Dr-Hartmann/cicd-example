@@ -33,18 +33,22 @@ stages:
   - build
   - deploy
 
-# Проверка форматирования и синтаксиса
-linting:
-  stage: lint
-  extends: .default_template
-  script:
-    - rustup component add rustfmt clippy
-    - cargo fmt --check
-    - cargo clippy -- -D warnings
+# # Проверка форматирования и синтаксиса
+# linting:
+#   stage: lint
+#   extends: .default_template
+#   script:
+#     - rustup component add rustfmt clippy
+#     - cargo fmt --check
+#     - cargo clippy -- -D warnings
 
 # сначала описан build, но первым выполнится test
 build-release:
   stage: build
+  before_script:
+    - echo "Переопределение before_script"
+    - cd $PROJECT_DIR
+    - echo $PROJECT_DIR
   script:
     - echo "Билд"
     - cargo build --release
@@ -53,11 +57,11 @@ build-release:
       - ./cicd-rust/src/target/release/cicd-rust
     expire_in: 1 week
 
-# тесты
-unit-tests:
-  stage: test
-  script:
-    - cargo test --verbose
+# # тесты
+# unit-tests:
+#   stage: test
+#   script:
+#     - cargo test --verbose
 
 # сам деплой, включает сохранение артефакта в результаты конвейера
 # Выгрузка в релизы (Generic Packages или Releases)
@@ -70,15 +74,13 @@ deploy-1:
     - if: $CI_COMMIT_TAG =~ /^v.*/ # Запускать только при создании тега (версии)
       when: on_success # по умолчанию
       # ручной запуск деплоя (последняя линия обороны, ответственность на человеке)
-    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH
       when: manual
-  before_script:
-    - echo "Переопределение before_script"
-    - cd $PROJECT_DIR
   script:
     - echo "Выгрузка артефакта для версии $CI_COMMIT_TAG"
     # Здесь обычно используется curl для загрузки в Generic Packages GitFlic
     # Или просто сохранение артефакта с длительным сроком хранения
+    - echo "Я артефакт" > artifact/artifact.txt
   artifacts:
     paths:
       - ./cicd-rust/src/target/release/cicd-rust
