@@ -60,13 +60,13 @@ unit-tests:
 # сам деплой, включает сохранение артефакта в результаты конвейера
 # Выгрузка в релизы (Generic Packages или Releases)
 # Примечание: В GitFlic выгрузка в разделы "Релизы" часто требует API-вызова
-deploy:
+deploy-1:
   stage: deploy
   needs:
     - build-release
   rules:
-    # - if: $CI_COMMIT_BRANCH == "main"
-    - if: $CI_COMMIT_TAG # Запускать только при создании тега (версии)
+    - if: $CI_COMMIT_BRANCH == "main"
+      # - if: $CI_COMMIT_TAG # Запускать только при создании тега (версии)
       # ручной запуск деплоя (последняя линия обороны, ответственность на человеке)
       when: manual
       # when: on_success # или вообще убрать, он по умолчанию
