@@ -3,7 +3,7 @@ use poem_openapi::{OpenApi, OpenApiService, payload::PlainText};
 use std::env;
 
 struct Api;
- 
+
 #[OpenApi]
 impl Api {
     #[oai(path = "/", method = "get")]
@@ -32,8 +32,6 @@ async fn main() -> Result<(), std::io::Error> {
     let listener = TcpListener::bind(format!("0.0.0.0:{}", port));
 
     println!("Сервер запущен на {url}");
-
-    dfv
 
     Server::new(listener).run(app).await
 }
