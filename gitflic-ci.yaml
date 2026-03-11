@@ -4,6 +4,7 @@ image: rust:1.92-alpine3.22
 # переменные окружения конвейера
 variables:
   CARGO_HOME: $CI_PROJECT_DIR/.cargo
+  PROJECT_DIR: "./cicd-rust/src/" 
 
 # Кеширование зависимостей ускорит последующие сборки
 cache:
@@ -14,6 +15,7 @@ cache:
 # выполняется перед каждой задачей
 before_script:
   - echo "Скрипт до основных инструкций (в каждой задаче)"
+  - cd $PROJECT_DIR
 
 # шаблон повторяющихся действий
 .default_template:
@@ -46,7 +48,7 @@ build-release:
     - cargo build --release
   artifacts:
     paths:
-      - target/release/cicd-rust # Замените на имя вашего бинарника
+      - ./cicd-rust/src/target/release/cicd-rust # Замените на имя вашего бинарника
     expire_in: 1 week
 
 # тесты
