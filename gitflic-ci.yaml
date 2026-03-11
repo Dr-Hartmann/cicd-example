@@ -41,15 +41,16 @@ stages:
 #     - cargo fmt --check
 #     - cargo clippy -- -D warnings
 
-# # сначала описан build, но первым выполнится test
-# build-release:
-#   stage: build
-#   script:
-#     - cargo build --release
-#   artifacts:
-#     paths:
-#       - ./cicd-rust/src/target/release/cicd-rust # Замените на имя вашего бинарника
-#     expire_in: 1 week
+# сначала описан build, но первым выполнится test
+build-release:
+  stage: build
+  script:
+    - echo "Билд"
+    # - cargo build --release
+  artifacts:
+    paths:
+      - ./cicd-rust/src/target/release/cicd-rust # Замените на имя вашего бинарника
+    expire_in: 1 week
 
 # # тесты
 # unit-tests:
@@ -62,8 +63,8 @@ stages:
 # Примечание: В GitFlic выгрузка в разделы "Релизы" часто требует API-вызова
 deploy-1:
   stage: deploy
-  # needs:
-  #   - build-release
+  needs:
+    - build-release
   rules:
     # ручной запуск деплоя (последняя линия обороны, ответственность на человеке)
     - if: $CI_COMMIT_BRANCH == "main"
