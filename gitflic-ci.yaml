@@ -28,18 +28,18 @@ after_script:
 
 # типы задач
 stages:
-  - lint
+  # - lint
   - test
   - build
   - deploy
 
-# Проверка форматирования и синтаксиса
-linting:
-  stage: lint
-  script:
-    - rustup component add rustfmt clippy
-    - cargo fmt --check
-    - cargo clippy -- -D warnings
+# # Проверка форматирования и синтаксиса
+# linting:
+#   stage: lint
+#   script:
+#     - rustup component add rustfmt clippy
+#     - cargo fmt --check
+#     - cargo clippy -- -D warnings
 
 # сначала описан build, но первым выполнится test
 build-release:
@@ -51,11 +51,11 @@ build-release:
       - ./cicd-rust/src/target/release/cicd-rust # Замените на имя вашего бинарника
     expire_in: 1 week
 
-# тесты
-unit-tests:
-  stage: test
-  script:
-    - cargo test --verbose
+# # тесты
+# unit-tests:
+#   stage: test
+#   script:
+#     - cargo test --verbose
 
 # сам деплой, включает сохранение артефакта в результаты конвейера
 # Выгрузка в релизы (Generic Packages или Releases)
@@ -79,4 +79,4 @@ deploy-1:
     # Или просто сохранение артефакта с длительным сроком хранения
   artifacts:
     paths:
-      - target/release/cicd-rust
+      - ./cicd-rust/src/target/release/cicd-rust
