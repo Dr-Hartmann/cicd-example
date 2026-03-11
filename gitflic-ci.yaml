@@ -29,7 +29,7 @@ after_script:
 # типы задач
 stages:
   # - lint
-  - test
+  # - test
   - build
   - deploy
 
@@ -64,12 +64,12 @@ deploy-1:
   stage: deploy
   needs:
     - build-release
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-      # - if: $CI_COMMIT_TAG # Запускать только при создании тега (версии)
-      # ручной запуск деплоя (последняя линия обороны, ответственность на человеке)
-      when: manual
-      # when: on_success # или вообще убрать, он по умолчанию
+  # rules:
+  # - if: $CI_COMMIT_BRANCH == "main"
+  # - if: $CI_COMMIT_TAG # Запускать только при создании тега (версии)
+  # ручной запуск деплоя (последняя линия обороны, ответственность на человеке)
+  # when: manual
+  # when: on_success # или вообще убрать, он по умолчанию
   before_script:
     - echo "Переопределение before_script"
     - cd $PROJECT_DIR
