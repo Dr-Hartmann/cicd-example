@@ -1,0 +1,14 @@
+job 1:
+  script: echo "Привет всем"
+
+job 2:
+  script: echo "И хорошего настроения"
+
+.default_template:
+  script:
+    - echo "Executing script"
+
+build_job:
+  extends: .default_template
+  script:
+    - echo "Building the project"
