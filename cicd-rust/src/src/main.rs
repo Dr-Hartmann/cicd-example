@@ -33,5 +33,7 @@ async fn main() -> Result<(), std::io::Error> {
 
     println!("Сервер запущен на {url}");
 
+    dfv
+
     Server::new(listener).run(app).await
 }
