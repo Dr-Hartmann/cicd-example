@@ -5,6 +5,7 @@ image: rust:1.92-alpine3.22
 variables:
   CARGO_HOME: $CI_PROJECT_DIR/.cargo
   PROJECT_DIR: "./"
+  RELEASE_VERSION: ${CI_COMMIT_TAG:latest}
 
 # Кеширование зависимостей ускорит последующие сборки
 cache:
@@ -73,7 +74,6 @@ deploy:
   #   - if: $CI_COMMIT_REF_NAME # Запускать только при создании тега (версии)
   #     when: on_success # по умолчанию
   script:
-    - RELEASE_VERSION=${CI_COMMIT_TAG:latest}
     - echo "Выгрузка артефакта для версии $RELEASE_VERSION"
     - mkdir -p artifacts_out
     - echo "Версия - $RELEASE_VERSION" > artifacts_out/artifact.txt
