@@ -2,7 +2,7 @@ variables:
   APP_NAME: cicd-example
 
 build:
-  stage: test
+  stage: build
   image: rust:${RUST_VERSION}-alpine${ALPINE_VERSION}
   script:
     - rustup component add rustfmt clippy
@@ -52,9 +52,6 @@ deploy:
     expire_in: 1 week
   after_script:
     - docker image prune -f
-
-stages:
-  - release
 
 release-job:
   rules:
