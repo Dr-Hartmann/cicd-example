@@ -1,66 +1,28 @@
-# образ запуска, должен быть на хост-машине
-image: rust:1.92-alpine3.22
-
-# переменные окружения конвейера
 variables:
-  PROJECT_DIR: "./"
-  CARGO_HOME: $CI_PROJECT_DIR/.cargo
-  NAME: "cicd-example"
-
-# Кеширование зависимостей ускорит последующие сборки
-cache:
-  paths:
-    - $CARGO_HOME/bin/
-    - $CARGO_HOME/registry/index/
-    - $CARGO_HOME/registry/cache/
-    - $CARGO_HOME/git/db/
-
-# выполняется перед каждой задачей
-before_script:
-  - cd ${PROJECT_DIR:-.}
-
-# шаблон повторяющихся действий
-.default_template:
-  script:
-    - echo "Шаблонные действия"
-
-# выполняется после каждой задачи
-after_script:
-  - echo "Конец задачи"
+  APP_NAME: "cicd-example"
+  # Тег образа
+  IMAGE_TAG: ${CI_COMMIT_TAG:-latest}
+  # Образ для сборки Docker (Docker-in-Docker)
+  DOCKER_IMAGE: docker:29.3.0
 
 # типы задач
 stages:
-  # - lint
-  # - test
-  - build
-  # - deploy
+  - lint
+  - test
+  - deploy
   - package
 
-# # Проверка форматирования и синтаксиса
-# linting:
-#   stage: lint
-#   extends: .default_template
-#   script:
-#     - rustup component add rustfmt clippy
-#     - cargo fmt --check
-#     - cargo clippy -- -D warnings
-
-# сначала описан build, но первым выполнится test
-build:
-  stage: build
+linting:
+  stage: lint
   script:
-    - cargo build --release
-    # - ./target/release/cicd --version
-  artifacts:
-    paths:
-      - target/release/cicd
-    expire_in: 1 week
+    - rustup component add rustfmt clippy
+    - cargo fmt --check
+    - cargo clippy -- -D warnings
 
-# # тесты
-# tests:
-#   stage: test
-#   script:
-#     - cargo test --verbose
+tests:
+  stage: test
+  script:
+    - cargo test --verbose
 
 # # сам деплой, включает сохранение артефакта в результаты конвейера
 # deploy:
@@ -102,14 +64,14 @@ build:
 
 docker_package:
   stage: package
-  image: docker:29.3.0
-  needs:
-    - build
+  image: ${DOCKER_IMAGE}
   script:
-    - docker info
-    - docker build -t ${NAME}:${CI_COMMIT_TAG:-latest} .
-    # 2. Сохраняем образ в файл .tar
-    - docker save ${NAME}:${CI_COMMIT_TAG:-latest} > {$NAME}.tar
+    - >
+      docker build 
+      --build-arg APP_NAME=${APP_NAME} 
+      --build-arg OUT_NAME=${APP_NAME} 
+      -t ${APP_NAME}:${IMAGE_TAG} .
+    - docker save ${APP_NAME}:${IMAGE_TAG} > ${APP_NAME}.tar
   artifacts:
     paths:
       - "*.tar"
