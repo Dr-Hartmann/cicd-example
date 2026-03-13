@@ -1,8 +1,13 @@
 variables:
   APP_NAME: cicd-example
 
-build:
-  stage: build
+stages:
+  - test
+  - deploy
+  - release
+
+test:
+  stage: test
   image: rust:${RUST_VERSION}-alpine${ALPINE_VERSION}
   script:
     - rustup component add rustfmt clippy
