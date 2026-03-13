@@ -1,7 +1,6 @@
 ARG RUST_VERSION=1.92
 ARG ALPINE_VERSION=3.22
 ARG APP_NAME=app
-ARG OUT_NAME=app
 
 FROM rust:$RUST_VERSION-alpine$ALPINE_VERSION AS build
 WORKDIR /app
@@ -10,7 +9,6 @@ WORKDIR /app
 RUN apk add --no-cache clang lld musl-dev git
 
 ARG APP_NAME
-ARG OUT_NAME=${APP_NAME}
 
 # Build the application
 RUN --mount=type=bind,source=src,target=src \
@@ -20,11 +18,11 @@ RUN --mount=type=bind,source=src,target=src \
     --mount=type=cache,target=/usr/local/cargo/git/db \
     --mount=type=cache,target=/usr/local/cargo/registry/ \
     cargo build --locked --release && \
-    cp ./target/release/${APP_NAME} /bin/${OUT_NAME}
+    cp ./target/release/${APP_NAME} /bin/${APP_NAME}
 
 # scratch или distroless будут еще меньше
 FROM alpine:$ALPINE_VERSION AS final
-ARG OUT_NAME
+ARG APP_NAME
 # Create a non-privileged user that the app will run under.
 ARG UID=10001
 
