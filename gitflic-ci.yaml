@@ -5,33 +5,22 @@ workflow:
 variables:
   APP_NAME: cicd-example
 
-image: rust:${RUST_VERSION}-alpine${ALPINE_VERSION}
-
-stages:
-  - lint
-  - test
-  - deploy
-
-linting:
-  stage: lint
-  rules:
-    - if: $CI_COMMIT_TAG      # Добавлено: разрешить для тегов
-    - if: $CI_COMMIT_BRANCH   # Добавлено: разрешить для веток
+build:
+  stage: test
+  image: rust:${RUST_VERSION}-alpine${ALPINE_VERSION}
+  tags:
+    - $CI_COMMIT_TAG
   script:
     - rustup component add rustfmt clippy
     - cargo fmt --check
     - cargo clippy -- -D warnings
-
-tests:
-  stage: test
-  rules:
-    - if: $CI_COMMIT_TAG      # Добавлено: разрешить для тегов
-    - if: $CI_COMMIT_BRANCH   # Добавлено: разрешить для веток
-  script:
     - cargo test --verbose
 
 deploy:
   stage: deploy
+  image: docker:${DOCKER_VERSION}
+  tags:
+    - $CI_COMMIT_TAG
   rules:
     - if: $CI_COMMIT_TAG
       when: manual
@@ -42,7 +31,6 @@ deploy:
     - if: $CI_COMMIT_REF_NAME
       when: manual
       allow_failure: true
-  image: docker:${DOCKER_VERSION}
   script:
     - export RELEASE_VERSION=${CI_COMMIT_TAG:-latest}
     - echo "Выгрузка артефакта для версии $RELEASE_VERSION"
