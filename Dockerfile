@@ -18,11 +18,10 @@ RUN --mount=type=bind,source=src,target=src \
     --mount=type=cache,target=/usr/local/cargo/git/db \
     --mount=type=cache,target=/usr/local/cargo/registry/ \
     cargo build --locked --release && \
-    cp ./target/release/${APP_NAME} /bin/${APP_NAME}
+    cp ./target/release/${APP_NAME} /bin/app
 
 # scratch или distroless будут еще меньше
 FROM alpine:$ALPINE_VERSION AS final
-ARG APP_NAME
 # Create a non-privileged user that the app will run under.
 ARG UID=10001
 
@@ -36,7 +35,7 @@ RUN adduser \
 appuser
 
 # Copy the executable from the "build" stage.
-COPY --from=build /bin/${APP_NAME} /bin/app
+COPY --from=build /bin/app /bin/app
 
 USER appuser
 EXPOSE 3000

@@ -60,7 +60,7 @@ linting:
 
 docker_package:
   stage: package
-  image: docker:29.3.0
+  image: docker:${DOCKER_VERSION}
   script:
     - export CURRENT_NAME=cicd
     - export IMAGE_TAG=${CI_COMMIT_TAG:-latest}
