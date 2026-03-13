@@ -75,3 +75,5 @@ docker_package:
     paths:
       - "*.tar"
     expire_in: 1 week
+  after_script:
+    - docker image prune -f

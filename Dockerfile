@@ -41,4 +41,4 @@ USER appuser
 EXPOSE 3000
 
 # What the container should run when it is started.
-ENTRYPOINT ["/usr/local/bin/app"]
+ENTRYPOINT ["/bin/app"]
