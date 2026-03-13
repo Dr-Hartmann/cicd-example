@@ -5,7 +5,7 @@ image: rust:1.92-alpine3.22
 variables:
   CARGO_HOME: $CI_PROJECT_DIR/.cargo
   PROJECT_DIR: "./"
-  RELEASE_VERSION: ${CI_COMMIT_TAG:latest}
+  RELEASE_VERSION: "${CI_COMMIT_TAG:latest}"
 
 # Кеширование зависимостей ускорит последующие сборки
 cache:
@@ -31,7 +31,7 @@ after_script:
 stages:
   # - lint
   # - test
-  - build
+  # - build
   - deploy
 
 # # Проверка форматирования и синтаксиса
@@ -44,11 +44,11 @@ stages:
 #     - cargo clippy -- -D warnings
 
 # сначала описан build, но первым выполнится test
-build:
-  stage: build
-  script:
-    - echo $PROJECT_DIR
-    - echo "Билд"
+# build:
+#   stage: build
+#   script:
+#     - echo $PROJECT_DIR
+#     - echo "Билд"
     # - cargo build --release
   # artifacts:
   #   paths:
@@ -66,8 +66,8 @@ build:
 # Примечание: В GitFlic выгрузка в разделы "Релизы" часто требует API-вызова
 deploy:
   stage: deploy
-  needs:
-    - build
+  # needs:
+  #   - build
   # rules:
   #   - if: $CI_DEFAULT_BRANCH # ручной запуск деплоя (последняя линия обороны, ответственность на человеке)
   #     when: manual
