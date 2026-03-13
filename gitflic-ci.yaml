@@ -3,8 +3,8 @@ image: rust:1.92-alpine3.22
 
 # переменные окружения конвейера
 variables:
-  CARGO_HOME: $CI_PROJECT_DIR/.cargo
   PROJECT_DIR: "./"
+  CARGO_HOME: $CI_PROJECT_DIR/.cargo
 
 # Кеширование зависимостей ускорит последующие сборки
 cache:
@@ -67,11 +67,19 @@ deploy:
   stage: deploy
   # needs:
   #   - build
-  # rules:
-  #   - if: $CI_DEFAULT_BRANCH # ручной запуск деплоя (последняя линия обороны, ответственность на человеке)
-  #     when: manual
-  #   - if: $CI_COMMIT_REF_NAME # Запускать только при создании тега (версии)
-  #     when: on_success # по умолчанию
+  rules:
+    # 1. Если это ТЕГ — деплоим автоматически
+    - if: $CI_COMMIT_TAG
+      when: on_success
+
+    # 2. Если это ветка MAIN — ручной запуск (последняя линия обороны)
+    - if: $CI_COMMIT_REF_NAME == "main"
+      when: manual
+
+    # 3. Для остальных веток (фич-ветки и т.д.) — тоже ручной запуск или вообще убрать
+    - if: $CI_COMMIT_REF_NAME != "main"
+      when: manual
+      allow_failure: true
   script:
     - export RELEASE_VERSION=${CI_COMMIT_TAG:-latest}
     - echo "Выгрузка артефакта для версии $RELEASE_VERSION"
