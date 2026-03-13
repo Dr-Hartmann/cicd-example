@@ -10,6 +10,8 @@ stages:
 
 linting:
   stage: lint
+  rules:
+    - if: $CI_COMMIT_REF_NAME
   script:
     - rustup component add rustfmt clippy
     - cargo fmt --check
@@ -17,6 +19,8 @@ linting:
 
 tests:
   stage: test
+  rules:
+    - if: $CI_COMMIT_REF_NAME
   script:
     - cargo test --verbose
 
