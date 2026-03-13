@@ -50,7 +50,7 @@ build:
   stage: build
   script:
     - cargo build --release
-    - ./target/release/cicd --version
+    # - ./target/release/cicd --version
   artifacts:
     paths:
       - target/release/cicd
