@@ -48,11 +48,11 @@ stages:
 #   script:
 #     - echo $PROJECT_DIR
 #     - echo "Билд"
-    # - cargo build --release
-  # artifacts:
-  #   paths:
-  #     - target/release/cicd
-  #   expire_in: 1 week
+# - cargo build --release
+# artifacts:
+#   paths:
+#     - target/release/cicd
+#   expire_in: 1 week
 
 # # тесты
 # unit-tests:
@@ -85,6 +85,7 @@ deploy:
     - echo "Выгрузка артефакта для версии $RELEASE_VERSION"
     - mkdir -p artifacts_out
     - echo "Версия - $RELEASE_VERSION" > artifacts_out/artifact.txt
+    - echo "Сообщение - $CI_COMMIT_MESSAGE" >> artifacts_out/artifact.txt
     - echo "Хеш - $CI_COMMIT_SHA" >> artifacts_out/artifact.txt
     - echo "Время - $CI_COMMIT_TIMESTAMP" >> artifacts_out/artifact.txt
     - echo "Ветка - $CI_COMMIT_REF_NAME" >> artifacts_out/artifact.txt
