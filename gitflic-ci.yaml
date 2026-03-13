@@ -1,3 +1,6 @@
+# образ запуска, должен быть на хост-машине
+image: rust:1.92-alpine3.22
+
 variables:
   APP_NAME: "cicd-example"
 
