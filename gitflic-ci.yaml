@@ -1,3 +1,6 @@
+# образ запуска, должен быть на хост-машине
+image: rust:${RUST_VERSION}-alpine${ALPINE_VERSION}
+
 # типы задач
 stages:
   - lint
@@ -7,8 +10,6 @@ stages:
 
 linting:
   stage: lint
-  tags:
-    - shell
   script:
     - rustup component add rustfmt clippy
     - cargo fmt --check
