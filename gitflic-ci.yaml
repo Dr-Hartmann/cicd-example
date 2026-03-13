@@ -52,3 +52,4 @@ deploy:
     expire_in: 1 week
   after_script:
     - docker image prune -f
+
