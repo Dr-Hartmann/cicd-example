@@ -5,13 +5,8 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-      args:
-        RUST_VERSION: 1.92
-        ALPINE_VERSION: 3.22
-        APP_NAME: cicd
-        OUT_NAME: server
     ports:
-      - "${APP_SERVER_PORT}:3000"
+      - "${APP_PORT}:3000"
     environment:
       RUST_LOG: info
     # depends_on:
