@@ -2,7 +2,7 @@ ARG RUST_VERSION=1.92
 ARG ALPINE_VERSION=3.22
 ARG APP_NAME=app
 
-FROM rust:$RUST_VERSION-alpine$ALPINE_VERSION AS build
+FROM rust:${RUST_VERSION}-alpine${ALPINE_VERSION} AS build
 WORKDIR /app
 
 # Install host build dependencies.
@@ -36,7 +36,7 @@ RUN adduser \
 appuser
 
 # Copy the executable from the "build" stage.
-COPY --from=build /bin/$OUT_NAME /bin/app
+COPY --from=build /bin/${APP_NAME} /bin/app
 
 USER appuser
 EXPOSE 3000
