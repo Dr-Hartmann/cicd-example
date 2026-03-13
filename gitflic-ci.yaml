@@ -9,7 +9,7 @@ variables:
 stages:
   - lint
   - test
-  - deploy
+  # - deploy
   - package
 
 linting:
