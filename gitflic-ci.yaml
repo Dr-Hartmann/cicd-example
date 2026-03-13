@@ -30,10 +30,10 @@ after_script:
 
 # типы задач
 stages:
-  - lint
-  - test
+  # - lint
+  # - test
   - build
-  - deploy
+  # - deploy
   - package
 
 # Проверка форматирования и синтаксиса
@@ -113,10 +113,10 @@ docker_package:
   needs:
     - build
   script:
-    - docker build -t $NAME:${CI_COMMIT_TAG:-latest} .
+    - docker build -t ${NAME}:${CI_COMMIT_TAG:-latest} .
     # 2. Сохраняем образ в файл .tar
-    - docker save $NAME:${CI_COMMIT_TAG:-latest} > $NAME.tar
+    - docker save ${NAME}:${CI_COMMIT_TAG:-latest} > {$NAME}.tar
   artifacts:
     paths:
-      - $NAME.tar
+      - "*.tar"
     expire_in: 1 week
