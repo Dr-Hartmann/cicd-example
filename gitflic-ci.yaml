@@ -1,7 +1,8 @@
 workflow:
   rules:
     - if: $CI_COMMIT_TAG
-    - if: $CI_COMMIT_BRANCH
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_REF_NAME
 
 variables:
   APP_NAME: cicd-example
@@ -15,6 +16,9 @@ stages:
 
 linting:
   stage: lint
+  rules:
+    - if: $CI_COMMIT_TAG      # Добавлено: разрешить для тегов
+    - if: $CI_COMMIT_BRANCH   # Добавлено: разрешить для веток
   script:
     - rustup component add rustfmt clippy
     - cargo fmt --check
@@ -22,6 +26,9 @@ linting:
 
 tests:
   stage: test
+  rules:
+    - if: $CI_COMMIT_TAG      # Добавлено: разрешить для тегов
+    - if: $CI_COMMIT_BRANCH   # Добавлено: разрешить для веток
   script:
     - cargo test --verbose
 
