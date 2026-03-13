@@ -1,14 +1,11 @@
 ARG RUST_VERSION=1.91
 ARG ALPINE_VERSION=3.21
-ARG APP_NAME=app
 
 FROM rust:${RUST_VERSION}-alpine${ALPINE_VERSION} AS build
 WORKDIR /app
 
 # Install host build dependencies.
 RUN apk add --no-cache clang lld musl-dev git
-
-ARG APP_NAME
 
 # Build the application
 RUN --mount=type=bind,source=src,target=src \
