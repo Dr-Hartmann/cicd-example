@@ -81,6 +81,8 @@ deploy:
     - echo "Время - $CI_COMMIT_TIMESTAMP" >> artifacts_out/artifact.txt
     - echo "Ветка - $CI_COMMIT_REF_NAME" >> artifacts_out/artifact.txt
     - echo "Юзер - $GITFLIC_USER_EMAIL" >> artifacts_out/artifact.txt
+    - echo "Карго - $CARGO_HOME" >> artifacts_out/artifact.txt
+    - echo "Корень - $PROJECT_DIR" >> artifacts_out/artifact.txt
     # Здесь обычно используется curl для загрузки в Generic Packages GitFlic
     # Или просто сохранение артефакта с длительным сроком хранения
   artifacts:
