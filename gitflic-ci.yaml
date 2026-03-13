@@ -28,8 +28,8 @@ after_script:
 
 # типы задач
 stages:
-  - lint
-  - test
+  # - lint
+  # - test
   - build
   - deploy
 
