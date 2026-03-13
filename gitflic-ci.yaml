@@ -9,8 +9,10 @@ variables:
 # Кеширование зависимостей ускорит последующие сборки
 cache:
   paths:
-    - $CARGO_HOME
-    - $PROJECT_DIR/target/
+    - $CARGO_HOME/bin/
+    - $CARGO_HOME/registry/index/
+    - $CARGO_HOME/registry/cache/
+    - $CARGO_HOME/git/db/
 
 # выполняется перед каждой задачей
 before_script:
@@ -49,10 +51,10 @@ build:
     - echo $PROJECT_DIR
     - echo "Билд"
     - cargo build --release
-artifacts:
-  paths:
-    - target/release/cicd
-  expire_in: 1 week
+  artifacts:
+    paths:
+      - target/release/cicd
+    expire_in: 1 week
 
 # # тесты
 # unit-tests:
