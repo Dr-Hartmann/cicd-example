@@ -1,7 +1,3 @@
-workflow:
-  rules:
-    - when: always
-
 variables:
   APP_NAME: cicd-example
 
